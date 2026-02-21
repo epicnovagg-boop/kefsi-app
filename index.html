@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KEFSI - تطبيق إسلامي لقراءة القرآن والأذكار</title>
+<meta name="description" content="KEFSI تطبيق احترافي لقراءة القرآن، الأذكار، المسبحة واتجاه القبلة لجميع الهواتف">
+<meta name="keywords" content="KEFSI, قرآن, أذكار, مسبحة, قبلة, الجزائر, تطبيق إسلامي">
+<meta name="author" content="KEFSI">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+:root{
+--main:#1fa97a;
+--dark1:#0c1f17;
+--dark2:#123d2c;
+--card:rgba(255,255,255,0.08);
+}
+body{
+background:linear-gradient(135deg,var(--dark1),var(--dark2));
+color:white;
+direction:rtl;
+min-height:100vh;
+transition:0.4s;
+}
+body.gold{
+--main:#d4af37;
+--dark1:#1a1508;
+--dark2:#3d2f0f;
+--card:rgba(255,215,0,0.08);
+}
+header{
+text-align:center;
+padding:20px;
+font-size:2rem;
+font-weight:bold;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(10px);
+}
+nav{
+display:flex;
+justify-content:center;
+gap:10px;
+padding:15px;
+flex-wrap:wrap;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(15px);
+border-radius:15px;
+margin:10px;
+}
+nav button{
+background:rgba(255,255,255,0.15);
+border:1px solid rgba(255,255,255,0.25);
+padding:10px 20px;
+border-radius:25px;
+color:white;
+cursor:pointer;
+font-size:1rem;
+font-weight:bold;
+transition:0.3s;
+box-shadow:0 6px 15px rgba(0,0,0,0.4);
+}
+nav button:hover{
+background:var(--main);
+transform:translateY(-2px);
+}
+.section{display:none;padding:2vw;max-width:95%;margin:auto;}
+.section.active{display:block;}
+.card{
+background:var(--card);
+padding:4vw;
+border-radius:15px;
+backdrop-filter:blur(12px);
+box-shadow:0 12px 35px rgba(0,0,0,0.5);
+margin-bottom:20px;
+}
+iframe{width:100%;height:calc(100vh - 220px);border:none;border-radius:15px;}
+#welcome .card{
+max-width:90%;margin:10vh auto;padding:5vw;text-align:center;
+background:rgba(255,255,255,0.12);
+box-shadow:0 15px 40px rgba(0,0,0,0.5);
+border-radius:20px;
+}
+#welcome h1{font-size:3rem;margin-bottom:1rem;}
+#welcome p{font-size:1.2rem;margin-bottom:1.5rem;}
+#welcome .action{
+background:var(--main);padding:0.8rem 2rem;font-size:1.2rem;
+border-radius:30px;font-weight:bold;cursor:pointer;
+}
+.tasbih{
+width:70vw;height:70vw;max-width:300px;max-height:300px;
+margin:5vw auto;border-radius:50%;
+background:radial-gradient(circle at 30% 30%, var(--main), #0f5c45);
+display:flex;align-items:center;justify-content:center;
+font-size:4rem;font-weight:bold;cursor:pointer;position:relative;
+box-shadow:0 20px 50px rgba(0,0,0,0.6),inset 0 0 30px rgba(255,255,255,0.3);
+transition:0.15s;
+}
+.tasbih:active{transform:scale(0.95);}
+.glow{
+position:absolute;width:100%;height:100%;border-radius:50%;
+border:3px solid rgba(255,255,255,0.3);animation:pulse 2s infinite;
+}
+@keyframes pulse{
+0%{transform:scale(1);opacity:0.5}
+50%{transform:scale(1.1);opacity:0.2}
+100%{transform:scale(1);opacity:0.5}
+}
+button.action{
+background:var(--main);border:none;padding:0.8rem 1.5rem;
+border-radius:30px;color:white;cursor:pointer;margin-top:1rem;font-weight:bold;
+}
+.stats{margin-top:0.5rem;font-size:1rem;opacity:0.8}
+.milestone{margin-top:0.5rem;color:var(--main);font-weight:bold;font-size:1.1rem}
+ul{list-style:none;margin-top:1rem;line-height:2rem;font-size:1rem}
+footer{text-align:center;padding:20px;opacity:0.7}
+.adhkar-item{margin-bottom:15px;padding:10px;border-radius:10px;background:rgba(255,255,255,0.05)}
+.adhkar-item button{margin-top:8px}
+
+/* --- قائمة المسبحة أنيقة --- */
+#zikr {
+  width: 80%;
+  margin: 2vw auto;
+  padding: 0.8rem 1rem;
+  font-size: 1.2rem;
+  border-radius: 25px;
+  border: 2px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.1);
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: 0.3s;
+}
+#zikr:hover {
+  background: rgba(255,255,255,0.2);
+}
+#zikr:focus {
+  outline: none;
+  border-color: var(--main);
+  box-shadow: 0 0 10px var(--main);
+}
+
+/* فقاعة اختيار الذكر */
+#zikrBubble {
+  position: absolute;
+  top: -50px; 
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--main);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 1.2s;
+  z-index: 1000;
+}
+#zikrBubble.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-60px);
+}
+</style>
+</head>
+<body>
+
+<!-- أصوات -->
+<audio id="tasbihAudio" src="tasbih.mp3"></audio>
+<audio id="adhanAudio" src="adhan.mp3"></audio>
+
+<header>KEFSI Islamic 👑</header>
+
+<nav>
+<button onclick="showSection('home')">الرئيسية</button>
+<button onclick="showSection('quran')">القرآن</button>
+<button onclick="showSection('prayer')">أوقات الصلاة</button>
+<button onclick="showSection('tasbih')">المسبحة</button>
+<button onclick="showSection('adhkar')">الأذكار</button>
+<button onclick="showSection('qibla')">القبلة</button>
+<button onclick="toggleTheme()">🌙 / 👑</button>
+</nav>
+
+<section id="welcome" class="section active">
+<div class="card">
+<h1>ابدأ الآن</h1>
+<p>KEFSI - تطبيق لقراءة القرآن، الأذكار، المسبحة واتجاه القبلة</p>
+<button class="action" onclick="enterApp()">دخول التطبيق</button>
+</div>
+</section>
+
+<section id="home" class="section">
+<div class="card">
+<h2>مرحباً بك في الوضع الأسطوري 🔥</h2>
+<p>تجربة روحانية احترافية كاملة.</p>
+</div>
+</section>
+
+<section id="quran" class="section">
+<div class="card">
+<h2>القرآن الكريم</h2>
+<iframe src="quran.pdf"></iframe>
+</div>
+</section>
+
+<section id="prayer" class="section">
+<div class="card">
+<h2>أوقات الصلاة</h2>
+<select id="wilaya"></select>
+<ul id="times"></ul>
+<button class="action" onclick="requestNotification()">تفعيل تنبيهات الأذان 🔔</button>
+<div style="margin-top:10px;text-align:center">
+    <button class="action" onclick="playAdhanTest()">🔔 تجربة الأذان</button>
+    <button class="action" onclick="stopAdhan()">⏹ إيقاف الأذان</button>
+</div>
+</div>
+</section>
+
+<section id="tasbih" class="section">
+<div class="card" style="text-align:center">
+<select id="zikr">
+<option value="سبحان الله">🌙 سبحان الله</option>
+<option value="الحمد لله">🌟 الحمد لله</option>
+<option value="الله أكبر">🕋 الله أكبر</option>
+<option value="أستغفر الله">⭐ أستغفر الله</option>
+</select>
+<div class="tasbih" onclick="countTasbih()">
+<span id="counter">0</span>
+<div class="glow"></div>
+</div>
+<div class="milestone" id="milestone"></div>
+<button class="action" onclick="resetTasbih()">إعادة التصفير</button>
+<div class="stats" id="stats"></div>
+</div>
+</section>
+
+<section id="adhkar" class="section">
+<div class="card">
+<h2>أذكار الصباح 🌅</h2>
+<div id="morningAdhkar"></div>
+<h2 style="margin-top:20px">أذكار المساء 🌙</h2>
+<div id="eveningAdhkar"></div>
+</div>
+</section>
+
+<section id="qibla" class="section">
+<div class="card" style="text-align:center">
+<h2>اتجاه القبلة الحقيقي 🧭</h2>
+<p id="locationStatus">جاري تحديد موقعك...</p>
+<div id="compass" style="font-size:25vw;margin-top:5vw;transition:0.3s">🧭</div>
+<p id="qiblaDegree" style="margin-top:2vw;font-size:1rem"></p>
+</div>
+</section>
+
+<footer>© KEFSI 2026</footer>
+
+<script>
+function showSection(id){
+document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+function enterApp(){
+document.getElementById('welcome').classList.remove('active');
+showSection('home');
+}
+function toggleTheme() {
+    document.body.classList.toggle("gold");
+    const header = document.querySelector("header");
+    if(document.body.classList.contains("gold")){
+        header.innerHTML = "KEFSI Islamic 👑"; 
+    } else {
+        header.innerHTML = "KEFSI Islamic 🌙"; 
+    }
+}
+
+/* مسبحة */
+let count=localStorage.getItem("count")||0;
+let todayKey=new Date().toDateString();
+let daily=localStorage.getItem(todayKey)||0;
+document.getElementById("counter").innerText=count;
+updateStats();
+function countTasbih(){
+    const audio = document.getElementById("tasbihAudio");
+    audio.currentTime = 0;
+    audio.play();
+    count++; 
+    daily++;
+    localStorage.setItem("count",count);
+    localStorage.setItem(todayKey,daily);
+    document.getElementById("counter").innerText=count;
+    if(count==33||count==66||count==99){
+        document.getElementById("milestone").innerText="🏆 إنجاز "+count+" ذكر!";
+    }
+    updateStats();
+}
+function resetTasbih(){
+count=0;
+localStorage.setItem("count",0);
+document.getElementById("counter").innerText=0;
+document.getElementById("milestone").innerText="";
+updateStats();
+}
+function updateStats(){
+document.getElementById("stats").innerText="إجمالي: "+count+" | اليوم: "+daily;
+}
+
+/* فقاعات اختيار ذكر */
+let bubble = document.createElement("div");
+bubble.id = "zikrBubble";
+document.body.appendChild(bubble);
+const zikrSelect = document.getElementById("zikr");
+zikrSelect.addEventListener("change", ()=>{
+  let value = zikrSelect.value;
+  bubble.innerText = "✅ " + value;
+  bubble.classList.add("show");
+  setTimeout(()=>{ bubble.classList.remove("show"); }, 1200);
+});
+
+/* أوقات الصلاة */
+const wilayas=["Alger","Oran","Constantine","Annaba","Setif"];
+const select=document.getElementById("wilaya");
+wilayas.forEach(w=>{
+let o=document.createElement("option");
+o.textContent=w;
+select.appendChild(o);
+});
+let prayerTimes={};
+function getTimes(){
+fetch(`https://api.aladhan.com/v1/timingsByCity?city=${select.value}&country=Algeria&method=2`)
+.then(r=>r.json())
+.then(d=>{
+let t=d.data.timings;
+prayerTimes=t;
+document.getElementById("times").innerHTML=
+"<li>الفجر: "+t.Fajr+"</li>"+
+"<li>الظهر: "+t.Dhuhr+"</li>"+
+"<li>العصر: "+t.Asr+"</li>"+
+"<li>المغرب: "+t.Maghrib+"</li>"+
+"<li>العشاء: "+t.Isha+"</li>";
+scheduleAdhan();
+});
+}
+select.addEventListener("change",getTimes);
+getTimes();
+
+const adhanAudio = document.getElementById("adhanAudio");
+
+function requestNotification(){
+if("Notification" in window){
+Notification.requestPermission().then(p=>{
+if(p==="granted"){alert("تم تفعيل التنبيهات 🔔");}
+});
+}
+}
+
+/* نافذة وقت الصلاة */
+function showAdhanOverlay(salahName){
+    let overlay = document.createElement("div");
+    overlay.id = "adhanOverlay";
+    overlay.style.position = "fixed";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "rgba(0,0,0,0.8)";
+    overlay.style.color = "white";
+    overlay.style.display = "flex";
+    overlay.style.flexDirection = "column";
+    overlay.style.justifyContent = "center";
+    overlay.style.alignItems = "center";
+    overlay.style.fontSize = "2rem";
+    overlay.style.zIndex = "9999";
+    overlay.innerHTML = `
+        <div style="text-align:center;margin-bottom:2rem">
+            🕌 حان وقت صلاة ${salahName}!
+        </div>
+        <button class="action" style="font-size:1.2rem;padding:1rem 2rem;" onclick="stopAdhanOverlay()">⏹ إيقاف الأذان</button>
+    `;
+    document.body.appendChild(overlay);
+    adhanAudio.currentTime = 0;
+    adhanAudio.play();
+}
+
+function stopAdhanOverlay(){
+    adhanAudio.pause();
+    adhanAudio.currentTime = 0;
+    let overlay = document.getElementById("adhanOverlay");
+    if(overlay) overlay.remove();
+}
+
+function scheduleAdhan(){
+    if(Notification.permission!=="granted") return;
+    let now = new Date();
+    ["Fajr","Dhuhr","Asr","Maghrib","Isha"].forEach(name=>{
+        let time = prayerTimes[name];
+        if(!time) return;
+        let [h,m] = time.split(":");
+        let adhanTime = new Date();
+        adhanTime.setHours(h,m,0);
+        let diff = adhanTime - now;
+        if(diff>0){
+            setTimeout(()=>{
+                new Notification("حان الآن موعد الأذان 🕌",{body:name});
+                showAdhanOverlay(name);
+            }, diff);
+        }
+    });
+}
+
+function playAdhanTest(){
+    adhanAudio.currentTime = 0;
+    adhanAudio.play();
+}
+function stopAdhan(){
+    adhanAudio.pause();
+    adhanAudio.currentTime = 0;
+}
+
+/* قبلة حقيقية */
+const kaaba={lat:21.4225,lon:39.8262};
+function getQibla(lat,lon){
+let dLon=(kaaba.lon-lon)*Math.PI/180;
+lat*=Math.PI/180;
+let lat2=kaaba.lat*Math.PI/180;
+let y=Math.sin(dLon);
+let x=Math.cos(lat)*Math.tan(lat2)-Math.sin(lat)*Math.cos(dLon);
+return (Math.atan2(y,x)*180/Math.PI+360)%360;
+}
+if(navigator.geolocation){
+navigator.geolocation.getCurrentPosition(pos=>{
+let qiblaDir=getQibla(pos.coords.latitude,pos.coords.longitude);
+document.getElementById("locationStatus").innerText="تم تحديد موقعك ✅";
+if(window.DeviceOrientationEvent){
+window.addEventListener("deviceorientation",function(e){
+let heading=e.alpha;
+if(heading!==null){
+let rotate=heading-qiblaDir;
+document.getElementById("compass").style.transform="rotate("+(-rotate)+"deg)";
+document.getElementById("qiblaDegree").innerText="اتجاه القبلة: "+Math.round(qiblaDir)+"°";
+}
+});
+}
+});
+}
+
+/* أذكار بعداد */
+const morning=[
+"أصبحنا وأصبح الملك لله",
+"اللهم بك أصبحنا وبك أمسينا",
+"رضيت بالله رباً"
+];
+const evening=[
+"أمسينا وأمسى الملك لله",
+"اللهم بك أمسينا وبك أصبحنا",
+"أعوذ بكلمات الله التامات"
+];
+function renderAdhkar(list,container){
+list.forEach((text,i)=>{
+let div=document.createElement("div");
+div.className="adhkar-item";
+div.innerHTML=`<div>${text}</div>
+<div>العدد: <span id="c${container}${i}">0</span></div>
+<button class="action" onclick="inc('${container}',${i})">تسبيح</button>`;
+document.getElementById(container).appendChild(div);
+});
+}
+function inc(container,i){
+let el=document.getElementById("c"+container+i);
+el.innerText=parseInt(el.innerText)+1;
+}
+renderAdhkar(morning,"morningAdhkar");
+renderAdhkar(evening,"eveningAdhkar");
+
+</script>
+</body>
+</html>
